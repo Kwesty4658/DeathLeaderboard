@@ -131,3 +131,8 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+
+## Added by kwesty
+build.txt
+description.txt
+icon.png
