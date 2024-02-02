@@ -8,18 +8,24 @@ namespace DeathLeaderboard
 {
     public class PlayerDeathData
     {
-        private string FilePath = Path.Combine(Main.SavePath, "DeathLeaderboard", "PlayerDeaths.json");
+        private readonly string FilePath = Path.Combine(Main.SavePath, "DeathLeaderboard", "PlayerDeaths.json");
         
-        // holds an instance of the class to be accessed internally
+        // Holds an instance of the class to be accessed internally
         private static PlayerDeathData instance;
     
-        // class constructor - if LoadPlayerDeaths returns null (file doesn't exist) create new dict. 
+        // Class constructor - if LoadPlayerDeaths returns null (file doesn't exist) create new dict. 
         private PlayerDeathData()
         {
             PlayerDeaths = LoadPlayerDeaths() ?? new Dictionary<string, int>();
+
+            string directory = Path.GetDirectoryName(FilePath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
         }
 
-        // creates an instance of the class if one has not already been created
+        // Creates an instance of the class if one has not already been created
         public static PlayerDeathData Instance
         {
             get
@@ -36,17 +42,11 @@ namespace DeathLeaderboard
 
         public void SavePlayerDeaths()
         {
-            string directory = Path.GetDirectoryName(FilePath);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-            
             string json = JsonConvert.SerializeObject(PlayerDeaths, Formatting.Indented);
             File.WriteAllText(FilePath, json);
         }
 
-        // loads player deaths into a dictionary 
+        // Loads player deaths into a dictionary 
         private Dictionary<string, int> LoadPlayerDeaths()
         {
             if (File.Exists(FilePath))
