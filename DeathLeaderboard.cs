@@ -1,26 +1,33 @@
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace DeathLeaderboard
 {
-    public class DeathCounter : ModPlayer
+    public class DeathLeaderboard : Mod
     {
-        public override async void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            // accesses the singleton instance of playerDeathData
-            var playerDeathData = PlayerDeathData.Instance;
+        public static PlayerDeathData playerDeathData;
+        public static Dictionary<string, int> playerDeaths;
 
-            playerDeathData.PlayerDeaths[Player.name] = playerDeathData.PlayerDeaths.GetValueOrDefault(Player.name, 0) + 1;
+        public override void Load()
+        {
+            playerDeathData = PlayerDeathData.Instance;
+            playerDeaths = playerDeathData.PlayerDeaths;
+        }
+    }
+
+    public class PlayerDeath : ModPlayer
+    {
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            // If player not in data, add base value of 1. If player in data, increment by 1.
+            DeathLeaderboard.playerDeaths[Player.name] = DeathLeaderboard.playerDeaths.GetValueOrDefault(Player.name, 0) + 1;
 
             // save player deaths after updating
-            playerDeathData.SavePlayerDeaths();
+            DeathLeaderboard.playerDeathData.SavePlayerDeaths();
 
-            await Task.Delay(500);
-            Leaderboard.DisplayLeaderboard(playerDeathData.PlayerDeaths);
+            Leaderboard.DisplayLeaderboard(DeathLeaderboard.playerDeaths);
         }
     }
 }
