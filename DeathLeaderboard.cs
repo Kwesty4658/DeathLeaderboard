@@ -12,7 +12,7 @@ namespace DeathLeaderboard
             // accesses the singleton instance of playerDeathData
             var playerDeathData = PlayerDeathData.Instance;
 
-            playerDeathData.PlayerDeaths.AddOrUpdate(Player.name, 1, (key, oldValue) => oldValue + 1);            
+            playerDeathData.PlayerDeaths[Player.name] = playerDeathData.PlayerDeaths.GetValueOrDefault(Player.name, 0) + 1;
 
             // save player deaths after updating
             playerDeathData.SavePlayerDeaths();
