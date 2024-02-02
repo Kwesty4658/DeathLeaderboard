@@ -23,9 +23,9 @@ namespace DeathLeaderboard
         public override async void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             // If player not in data, add base value of 1. If player in data, increment by 1.
-            DeathLeaderboard.playerDeaths[Player.name] = DeathLeaderboard.playerDeaths.GetValueOrDefault(Player.name, 0) + 1;
+            DeathLeaderboard.playerDeaths[Player.name] = DeathLeaderboard.playerDeaths.GetValueOrDefault(Player.name, 1) + 1;
 
-            // save player deaths after updating
+            // Save player deaths after updating
             DeathLeaderboard.playerDeathData.SavePlayerDeaths();
 
             // Short delay as the leaderboard is sent before the death message.
