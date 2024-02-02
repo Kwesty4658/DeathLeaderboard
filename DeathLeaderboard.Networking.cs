@@ -8,8 +8,6 @@ namespace DeathLeaderboard
 {
     public static class MessageHandler
     {
-    private static bool IsOnline => Main.netMode == NetmodeID.Server;
-
         public static void SendMessage(string message, Color color)
         {
             NetworkText text = NetworkText.FromLiteral(message);
