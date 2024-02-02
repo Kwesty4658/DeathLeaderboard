@@ -36,11 +36,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\test\\test.csproj",
-      "projectName": "test",
-      "projectPath": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\test\\test.csproj",
+      "projectUniqueName": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DeathLeaderboard\\DeathLeaderboard.csproj",
+      "projectName": "DeathLeaderboard",
+      "projectPath": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DeathLeaderboard\\DeathLeaderboard.csproj",
       "packagesPath": "C:\\Users\\Conor\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\test\\obj\\",
+      "outputPath": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DeathLeaderboard\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Conor\\AppData\\Roaming\\NuGet\\NuGet.Config",

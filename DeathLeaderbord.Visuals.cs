@@ -8,7 +8,7 @@ namespace DeathLeaderboard
 {
     public static class Leaderboard
     {
-        public static void DisplayLeaderboard(ConcurrentDictionary<string, int> data)
+        public static void DisplayLeaderboard(Dictionary<string, int> data)
         {
             //sorts dicitionary by descending values
             var sortedData = from entry in data orderby entry.Value descending select entry;
@@ -21,7 +21,6 @@ namespace DeathLeaderboard
             }
 
             MessageHandler.SendMessage(sb.ToString(), Color.Red);
-            
         }
     }
 }

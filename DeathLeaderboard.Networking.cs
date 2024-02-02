@@ -8,23 +8,24 @@ namespace DeathLeaderboard
 {
     public static class MessageHandler
     {
+    private static bool IsOnline => Main.netMode == NetmodeID.Server;
+
         public static void SendMessage(string message, Color color)
         {
             NetworkText text = NetworkText.FromLiteral(message);
 
-            if (!IsOnline())
-            {
-                Main.NewText(message, color);
-            }
-            else
+            if (Main.netMode == NetmodeID.Server)
             {
                 ChatHelper.BroadcastChatMessage(text, color);
             }
-        }
-
-        private static bool IsOnline()
-        {
-            return Main.netMode == NetmodeID.MultiplayerClient || Main.netMode == NetmodeID.Server;
+            else if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            else
+            {
+                Main.NewText(message, color);
+            }
         }
     }
 }

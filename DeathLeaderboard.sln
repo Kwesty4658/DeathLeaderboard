@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "test.csproj", "{2BE11A9E-2470-4FF2-BF74-F255FE76F89F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeathLeaderboard", "DeathLeaderboard.csproj", "{2BE11A9E-2470-4FF2-BF74-F255FE76F89F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
