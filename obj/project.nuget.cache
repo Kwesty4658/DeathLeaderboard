@@ -1,13 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "zNxG8I546k6u5z0qqfYNoGitdPJKEJeGGssBvjgl2nLuitcuTTI/59mv32V+YnBMOq+ARDLj7I5OHawGO0Vnyw==",
+  "dgSpecHash": "hZBJ6G4bWeE=",
   "success": true,
   "projectFilePath": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DeathLeaderboard\\DeathLeaderboard.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Conor\\.nuget\\packages\\tmodloader.codeassist\\0.1.5\\tmodloader.codeassist.0.1.5.nupkg.sha512",
-    "C:\\Users\\Conor\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\Conor\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\Conor\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512"
+    "C:\\Users\\Conor\\.nuget\\packages\\tmodloader.codeassist\\0.1.5\\tmodloader.codeassist.0.1.5.nupkg.sha512"
   ],
   "logs": []
 }

@@ -1,0 +1,4 @@
+author = Kwesty
+displayName= Death Leaderboard
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, Old\*
+version = 2.0

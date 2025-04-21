@@ -1,0 +1,1 @@
+DeathLeaderboard is a simple mod that displays the deaths of players in chat when a played dies.
