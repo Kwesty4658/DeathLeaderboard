@@ -10,52 +10,50 @@ namespace DeathLeaderboard.Common.Storage
 {
     public class DataStorage : ModSystem
     {
-        public Dictionary<string, int> DeathData { get; set; } = new();
-
-        private string _dataLocation;
+        private string DataPath => Path.Combine(Main.SavePath, "DeathLeaderboard", Main.worldName, "data.json");
+        private string DirectoryPath => Path.GetDirectoryName(DataPath);
+        private Dictionary<string, int> _deathDataCache = new();
 
         public override void OnWorldLoad()
         {
-            _dataLocation = Path.Combine(Main.SavePath, "DeathLeaderboard", Main.worldName, "data.json");
-            string directory = Path.GetDirectoryName(_dataLocation);
-
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            if (!File.Exists(_dataLocation))
-            {
-                DeathData = new Dictionary<string, int>();
-                string emptyJson = JsonConvert.SerializeObject(DeathData, Formatting.Indented);
-                File.WriteAllText(_dataLocation, emptyJson);
-            }
-            else
-            {
-                string json = File.ReadAllText(_dataLocation);
-                DeathData = JsonConvert.DeserializeObject<Dictionary<string, int>>(json) ?? new Dictionary<string, int>();
-            }
-
-            Main.NewText("Death leaderboard data loaded.", Color.LightGreen);
+            CheckDataAndDirectory();
+            ReadDeathDisk();
         }
-
         public override void OnWorldUnload()
         {
-            SaveData();
+            CheckDataAndDirectory();
+            WriteDeathDisk();
         }
 
-        public void SaveOnDeath()
+        public void WriteDeathDisk()
         {
-            SaveData();
+            string json = JsonConvert.SerializeObject(_deathDataCache, Formatting.Indented);
+            File.WriteAllText(DataPath, json);
+        }
+        public void ReadDeathDisk()
+        {
+            string json = File.ReadAllText(DataPath);
+            _deathDataCache = JsonConvert.DeserializeObject<Dictionary<string, int>>(json) ?? new();
         }
 
-        private void SaveData()
+        public void WriteDeathCache(Player player)
         {
-            if (string.IsNullOrEmpty(_dataLocation))
-                return;
+            _deathDataCache[player.name] = _deathDataCache.GetValueOrDefault(player.name, 1) + 1;
+        }
+        public Dictionary<string, int> ReadDeathCache()
+        {
+            return _deathDataCache;
+        }
 
-            string json = JsonConvert.SerializeObject(DeathData, Formatting.Indented);
-            File.WriteAllText(_dataLocation, json);
+        private void CheckDataAndDirectory()
+        {
+            Directory.CreateDirectory(DirectoryPath);
+
+            if (!File.Exists(DataPath))
+            {
+                string emptyJson = JsonConvert.SerializeObject(_deathDataCache, Formatting.Indented);
+                File.WriteAllText(DataPath, emptyJson);
+            }
         }
     }
 }

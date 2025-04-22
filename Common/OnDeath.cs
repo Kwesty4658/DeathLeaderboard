@@ -10,31 +10,23 @@ using Terraria.ID;
 using Terraria.Chat;
 using System.Text;
 using System.Threading.Tasks;
-using Mono.Cecil.Cil;
 
 namespace DeathLeaderboard.Common
 {
     public class OnDeath : ModPlayer
     {
-        
         private Color _color = Color.Red;
 
         public override async void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            var dataStorage = ModContent.GetInstance<DataStorage>();
+            var data = ModContent.GetInstance<DataStorage>();
 
-            if (dataStorage.DeathData == null)
-            {
-                dataStorage.DeathData = new Dictionary<string, int>();
-            }
-
-            dataStorage.DeathData[Player.name] = dataStorage.DeathData.GetValueOrDefault(Player.name, 1) + 1;
-            dataStorage.SaveOnDeath();
+            data.WriteDeathCache(Player);
+            data.WriteDeathDisk();
 
             await Task.Delay(500);
-            SendMessage(dataStorage.DeathData);
+            SendMessage(data.ReadDeathCache());
         }
-
 
         private void SendMessage(Dictionary<string, int> data)
         {
