@@ -10,50 +10,47 @@ using Terraria.ID;
 using Terraria.Chat;
 using System.Text;
 using System.Threading.Tasks;
+using Mono.Cecil.Cil;
 
 namespace DeathLeaderboard.Common
 {
     public class OnDeath : ModPlayer
     {
-        private Color _color = Color.Red;
+        private DataStorage Data => ModContent.GetInstance<DataStorage>();
 
-        public override async void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            var data = ModContent.GetInstance<DataStorage>();
+        private bool _died = false;
 
-            data.WriteDeathCache(Player);
-            data.WriteDeathDisk();
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) => _died = true;
 
-            await Task.Delay(500);
-            SendMessage(data.ReadDeathCache());
+        public override void PostUpdate() {
+            if (_died) {
+                _died = false;
+                Data.Write(Player.name);
+                SendMessage();
+            }
         }
 
-        private void SendMessage(Dictionary<string, int> data)
-        {
-            var sortedData = from entry in data orderby entry.Value descending select entry;
-            StringBuilder sb = new ();
-            sb.AppendLine("Death Leaderboard:");
+        private void SendMessage() {
+            var sortedData = from entry in Data.GetData() orderby entry.Value descending select entry;
 
-            foreach (KeyValuePair<string, int> kvp in sortedData)
-            {
+            var sb = new StringBuilder();
+            sb.AppendLine("Death Leaderboard:");
+            foreach (var kvp in sortedData) {
                 sb.AppendLine($"  {kvp.Key}: {kvp.Value}");
             }
 
-            string message = sb.ToString();
-
-            NetworkText text = NetworkText.FromLiteral(message);
-
-            if (Main.netMode == NetmodeID.Server)
-            {
-                ChatHelper.BroadcastChatMessage(text, _color);
-            }
-            else if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-            else
-            {
-                Main.NewText(message, _color);
+            switch (Main.netMode) {
+                case NetmodeID.SinglePlayer:
+                    Main.NewText(sb.ToString(), Color.Red);
+                    return;
+                case NetmodeID.MultiplayerClient:
+                    return;
+                case NetmodeID.Server:
+                    NetworkText text = NetworkText.FromLiteral(sb.ToString());
+                    ChatHelper.BroadcastChatMessage(text, Color.Red);
+                    return;
+                default:
+                    return;
             }
         }
     }
