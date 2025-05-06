@@ -9,8 +9,6 @@ using Terraria.ModLoader;
 using Terraria.ID;
 using Terraria.Chat;
 using System.Text;
-using System.Threading.Tasks;
-using Mono.Cecil.Cil;
 
 namespace DeathLeaderboard.Common
 {
