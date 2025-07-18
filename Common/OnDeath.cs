@@ -41,12 +41,15 @@ namespace DeathLeaderboard.Common
                 case NetmodeID.SinglePlayer:
                     Main.NewText(sb.ToString(), Color.Red);
                     return;
+
                 case NetmodeID.MultiplayerClient:
                     return;
+    
                 case NetmodeID.Server:
                     NetworkText text = NetworkText.FromLiteral(sb.ToString());
                     ChatHelper.BroadcastChatMessage(text, Color.Red);
                     return;
+        
                 default:
                     return;
             }

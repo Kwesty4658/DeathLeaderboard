@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace DeathLeaderboard.Common.Storage
 {
