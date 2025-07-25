@@ -22,7 +22,8 @@ internal sealed class DeathTracker : ModPlayer
 
 	public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 	{
-		switch (Main.netMode) {
+		switch (Main.netMode)
+		{
 			case NetmodeID.Server:
 				return;
 
@@ -56,7 +57,8 @@ internal sealed class DeathTracker : ModPlayer
 
 	internal static void DisplayLeaderboard()
 	{
-		switch (Main.netMode) {
+		switch (Main.netMode)
+		{
 			case NetmodeID.Server:
 				ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(FormatLeaderboard()), s_deathMsgColour);
 				return;
@@ -78,7 +80,8 @@ internal sealed class DeathTracker : ModPlayer
 		StringBuilder sb = new();
 		sb.AppendLine("Leaderboard: ");
 
-		foreach (var player in DeathsSavingSystem.Players) {
+		foreach (var player in DeathsSavingSystem.Players)
+		{
 			var mostCommon = player.Causes
 				.OrderByDescending(c => c.Value)
 				.FirstOrDefault();

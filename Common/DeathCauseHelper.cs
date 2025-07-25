@@ -23,7 +23,8 @@ internal static class DeathCauseHelper
 
 	private static string GetOtherDeathSource(PlayerDeathReason reason)
 	{
-		return (OtherDeathCause)reason.SourceOtherIndex switch {
+		return (OtherDeathCause)reason.SourceOtherIndex switch
+		{
 			OtherDeathCause.Fell => "Falling",
 			OtherDeathCause.Drowned => "Drowning",
 			OtherDeathCause.Lava => "Lava",

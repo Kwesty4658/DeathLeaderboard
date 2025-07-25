@@ -16,7 +16,8 @@ internal class AttackerHandler : PacketHandler
 
 	public override void HandlePacket(BinaryReader reader, int fromWho)
 	{
-		switch (reader.ReadByte()) {
+		switch (reader.ReadByte())
+		{
 			case SyncLastAttacker:
 				ReceiveAttacker(reader, fromWho);
 				break;

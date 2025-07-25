@@ -39,8 +39,10 @@ internal sealed class DeathsSavingSystem : ModSystem
 	{
 		var player = Players.FirstOrDefault(p => p.Name == playerName);
 
-		if (player == null) {
-			Players.Add(new Player {
+		if (player == null)
+		{
+			Players.Add(new Player
+			{
 				Name = playerName,
 				Deaths = 1,
 				Causes = new Dictionary<string, int> { [npcName] = 1 }
@@ -71,12 +73,15 @@ internal sealed class DeathsSavingSystem : ModSystem
 
 		string oldJsonPath = Path.Combine(Main.SavePath, "Deathleaderboard", Main.worldName, "data.json");
 
-		if (File.Exists(oldJsonPath)) {
+		if (File.Exists(oldJsonPath))
+		{
 			s_log.Info("Old data exists! Migrating now.");
 
 			Dictionary<string, int> oldData = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(oldJsonPath));
-			foreach (var kvp in oldData) {
-				Players.Add(new Player {
+			foreach (var kvp in oldData)
+			{
+				Players.Add(new Player
+				{
 					Name = kvp.Key,
 					Deaths = kvp.Value,
 					Causes = []

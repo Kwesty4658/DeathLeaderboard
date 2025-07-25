@@ -10,7 +10,8 @@ internal class ModNetHandler
 
 	internal static void HandlePacket(BinaryReader reader, int fromWho)
 	{
-		switch (reader.ReadByte()) {
+		switch (reader.ReadByte())
+		{
 			case AttackerType:
 				_lastAttacker.HandlePacket(reader, fromWho);
 				return;
