@@ -16,9 +16,11 @@ namespace DeathLeaderboard.Common.Players;
 
 internal sealed class DeathTracker : ModPlayer
 {
+	private int _lastAttackerType = -1;
+
 	private static readonly Color s_deathMsgColour = new(255, 25, 25);
 
-	private int _lastAttackerType = -1;
+	private static LocalizedText DeathsTo => Language.GetOrRegister("Mods.DeathLeaderboard.Leaderboard.DeathsTo");
 
 	public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 	{
@@ -91,7 +93,6 @@ internal sealed class DeathTracker : ModPlayer
 				: $"    {player.Name}: {player.Deaths} | No death causes recorded"
 			);
 		}
-
 		return sb.ToString();
 	}
 }
