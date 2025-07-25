@@ -9,31 +9,22 @@ using Terraria.ModLoader;
 namespace DeathLeaderboard.Common.Systems
 {
     [Autoload(Side = ModSide.Server)]
-    internal class DeathsSavingSystem : ModSystem
+    internal sealed class DeathsSavingSystem : ModSystem
     {
-        private string _jsonPath;
-
         internal static List<Player> Players { get; private set; } = [];
+
+        private static string s_jsonPath;
+
         private static readonly ILog s_log = DeathLeaderboard.Log;
 
         public override void OnWorldLoad()
         {
-            s_log.Debug("Loading as server or singleplayer client.");
-
-            _jsonPath = Path.Combine(Path.GetDirectoryName(Main.ActiveWorldFileData.Path), $"{Main.ActiveWorldFileData.Path}.Deaths.json");
-
-            if (Migrate())
-                return;
-
-            if (!File.Exists(_jsonPath))
-                File.WriteAllText(_jsonPath, "[]");
-
-            Players = JsonConvert.DeserializeObject<List<Player>>(File.ReadAllText(_jsonPath));
+            ReadData();
         }
 
         public override void OnWorldUnload()
         {
-            File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(Players, Formatting.Indented));
+            File.WriteAllText(s_jsonPath, JsonConvert.SerializeObject(Players, Formatting.Indented));
         }
 
         public override void ClearWorld()
@@ -58,6 +49,19 @@ namespace DeathLeaderboard.Common.Systems
 
             player.Deaths++;
             player.Causes[npcName] = player.Causes.TryGetValue(npcName, out int count) ? count + 1 : 1;
+        }
+
+        internal static void ReadData()
+        {
+            s_jsonPath = Path.Combine(Path.GetDirectoryName(Main.ActiveWorldFileData.Path), $"{Main.ActiveWorldFileData.Path}.Deaths.json");
+
+            if (Migrate())
+                return;
+
+            if (!File.Exists(s_jsonPath))
+                File.WriteAllText(s_jsonPath, "[]");
+
+            Players = JsonConvert.DeserializeObject<List<Player>>(File.ReadAllText(s_jsonPath));
         }
 
         private static bool Migrate()
