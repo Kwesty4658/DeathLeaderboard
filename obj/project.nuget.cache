@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NjOl8V/abc8=",
+  "dgSpecHash": "Fmf3UaLAKGg=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DeathLeaderboard\\DeathLeaderboard.csproj",
+  "projectFilePath": "C:\\Users\\Conor\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DeathLeaderboard\\DeathLeaderboard.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Conor\\.nuget\\packages\\tmodloader.codeassist\\0.1.5\\tmodloader.codeassist.0.1.5.nupkg.sha512"
   ],

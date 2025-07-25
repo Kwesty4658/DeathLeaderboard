@@ -1,0 +1,25 @@
+Mods: {
+	DeathLeaderboard: {
+		Configs: {
+			Common: {
+				DisplayTypes: {
+					Label: Display Types
+					Tooltip: How the leaderboard is formatted in chat.
+
+					Deaths: {
+						Label: Deaths
+						Tooltip: Show only the total deaths per player.
+					}
+
+					DeathsCauses: {
+						Label: Deaths + Causes
+						Tooltip: Show both the total deaths, and the most common cause per player
+					}
+				}
+			}
+
+			DeathLeaderboardConfig.DisplayName: "Leaderboard formatting"
+			DisplayType.Tooltip: ""
+		}
+	}
+}

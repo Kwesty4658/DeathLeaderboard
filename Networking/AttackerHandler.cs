@@ -4,41 +4,40 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using DeathLeaderboard.Common.Systems;
 
-namespace DeathLeaderboard.Networking
+namespace DeathLeaderboard.Networking;
+
+internal class AttackerHandler : PacketHandler
 {
-    internal class AttackerHandler : PacketHandler
+    internal const byte SyncLastAttacker = 1;
+
+    internal AttackerHandler(byte handlerType) : base(handlerType) { }
+
+    public override void HandlePacket(BinaryReader reader, int fromWho)
     {
-        internal const byte SyncLastAttacker = 1;
-
-        internal AttackerHandler(byte handlerType) : base(handlerType) { }
-
-        public override void HandlePacket(BinaryReader reader, int fromWho)
+        switch (reader.ReadByte())
         {
-            switch (reader.ReadByte())
-            {
-                case SyncLastAttacker:
-                    ReceiveAttacker(reader, fromWho);
-                    break;
-            }
+            case SyncLastAttacker:
+                ReceiveAttacker(reader, fromWho);
+                break;
         }
+    }
 
-        internal void SendAttacker(string attackerName, int fromWho)
-        {
-            ModPacket packet = GetPacket(SyncLastAttacker, fromWho);
+    internal void SendAttacker(string attackerName, int fromWho)
+    {
+        ModPacket packet = GetPacket(SyncLastAttacker, fromWho);
 
-            packet.Write(attackerName);
-            packet.Send();
-        }
+        packet.Write(attackerName);
+        packet.Send();
+    }
 
-        private static void ReceiveAttacker(BinaryReader reader, int fromWho)
-        {
-            if (Main.netMode != NetmodeID.Server)
-                return;
+    private static void ReceiveAttacker(BinaryReader reader, int fromWho)
+    {
+        if (Main.netMode != NetmodeID.Server)
+            return;
 
-            string playerName = Main.player[fromWho].name;
-            string attackerName = reader.ReadString();
+        string playerName = Main.player[fromWho].name;
+        string attackerName = reader.ReadString();
 
-            DeathsSavingSystem.AddDeath(playerName, attackerName);
-        }
+        DeathsSavingSystem.AddDeath(playerName, attackerName);
     }
 }

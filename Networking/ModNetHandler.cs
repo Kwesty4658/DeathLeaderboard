@@ -1,21 +1,20 @@
 using System.IO;
 
-namespace DeathLeaderboard.Networking
+namespace DeathLeaderboard.Networking;
+
+internal class ModNetHandler
 {
-    internal class ModNetHandler
+    internal const int AttackerType = 1;
+
+    private static AttackerHandler _lastAttacker = new(AttackerType);
+
+    internal static void HandlePacket(BinaryReader reader, int fromWho)
     {
-        internal const int AttackerType = 1;
-
-        private static AttackerHandler _lastAttacker = new(AttackerType);
-
-        internal static void HandlePacket(BinaryReader reader, int fromWho)
+        switch (reader.ReadByte())
         {
-            switch (reader.ReadByte())
-            {
-                case AttackerType:
-                    _lastAttacker.HandlePacket(reader, fromWho);
-                    return;
-            }
+            case AttackerType:
+                _lastAttacker.HandlePacket(reader, fromWho);
+                return;
         }
     }
 }
