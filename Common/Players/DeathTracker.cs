@@ -1,4 +1,5 @@
 using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -7,15 +8,13 @@ using Terraria.ID;
 using Terraria.Chat;
 using Terraria.Localization;
 using DeathLeaderboard.Common.Systems;
-using System.Linq;
 
 namespace DeathLeaderboard.Common.Players
 {
-    public class DeathTracker : ModPlayer
+    internal sealed class DeathTracker : ModPlayer
     {
         private static readonly Color s_deathMsgColour = new(255, 25, 25);
 
-        private bool _playerHasDied = false;
         private int _lastAttackerType = -1;
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
@@ -30,23 +29,39 @@ namespace DeathLeaderboard.Common.Players
                     return;
 
                 case NetmodeID.SinglePlayer:
-                    _playerHasDied = true;
                     DeathsSavingSystem.AddDeath(Player.name, DeathCauseHelper.GetDeathCause(damageSource, _lastAttackerType));
                     return;
             }
         }
 
-        public override void OnHitByNPC(NPC npc, Terraria.Player.HurtInfo hurtInfo) => _lastAttackerType = npc.type;
-
-        public override void PostUpdate()
+        public override void OnRespawn()
         {
-            if (_playerHasDied)
-                DisplayLeaderboard();
-
-            _playerHasDied = false;
+            DisplayLeaderboard();
         }
 
+        public override void OnHitByNPC(NPC npc, Terraria.Player.HurtInfo hurtInfo) => _lastAttackerType = npc.type;
+
         internal static void DisplayLeaderboard()
+        {
+            switch (Main.netMode)
+            {
+                case NetmodeID.Server:
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(FormatLeaderboard()), s_deathMsgColour);
+                    return;
+
+                case NetmodeID.SinglePlayer:
+                    Main.NewText(FormatLeaderboard(), s_deathMsgColour);
+                    return;
+
+                case NetmodeID.MultiplayerClient:
+                    return;
+
+                default:
+                    return;
+            }
+        }
+
+        private static string FormatLeaderboard()
         {
             StringBuilder sb = new();
             sb.AppendLine("Leaderboard: ");
@@ -63,22 +78,7 @@ namespace DeathLeaderboard.Common.Players
                 );
             }
 
-            switch (Main.netMode)
-            {
-                case NetmodeID.Server:
-                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(sb.ToString()), s_deathMsgColour);
-                    return;
-
-                case NetmodeID.SinglePlayer:
-                    Main.NewText(sb.ToString(), s_deathMsgColour);
-                    return;
-
-                case NetmodeID.MultiplayerClient:
-                    return;
-
-                default:
-                    return;
-            }
+            return sb.ToString();
         }
     }
 }
