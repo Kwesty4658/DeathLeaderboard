@@ -1,9 +1,8 @@
 using System.IO;
-using DeathLeaderboard.Common.Players;
-using DeathLeaderboard.Common.Systems;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using DeathLeaderboard.Common.Systems;
 
 namespace DeathLeaderboard.Networking
 {
@@ -31,7 +30,7 @@ namespace DeathLeaderboard.Networking
             packet.Send();
         }
 
-        internal static void ReceiveAttacker(BinaryReader reader, int fromWho)
+        private static void ReceiveAttacker(BinaryReader reader, int fromWho)
         {
             if (Main.netMode != NetmodeID.Server)
                 return;
@@ -40,7 +39,6 @@ namespace DeathLeaderboard.Networking
             string attackerName = reader.ReadString();
 
             DeathsSavingSystem.AddDeath(playerName, attackerName);
-            DeathTracker.DisplayLeaderboard();
         }
     }
 }
