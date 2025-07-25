@@ -39,7 +39,11 @@ namespace DeathLeaderboard.Common.Players
             DisplayLeaderboard();
         }
 
-        public override void OnHitByNPC(NPC npc, Terraria.Player.HurtInfo hurtInfo) => _lastAttackerType = npc.type;
+        public override void OnHitByNPC(NPC npc, Terraria.Player.HurtInfo hurtInfo)
+        {
+            _lastAttackerType = npc.type;
+        }
+        
 
         // Need to do this since ModSystem.OnWorldLoad() isn't called on singleplayer clients.
         public override void OnEnterWorld()
