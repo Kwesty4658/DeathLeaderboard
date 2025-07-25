@@ -7,25 +7,21 @@ namespace DeathLeaderboard.Common
     {
         internal static string GetDeathCause(PlayerDeathReason reason, int lastAttackerType)
         {
-            if (reason.SourceOtherIndex != -1 && reason.SourceOtherIndex >= 0)
-                return GetOtherDeathSystemource(reason);
+            if (reason.SourceOtherIndex >= 0)
+                return GetOtherDeathSource(reason);
 
-            else if (reason.SourceNPCIndex != -1)
+            if (reason.SourceNPCIndex >= -1)
                 return Lang.GetNPCNameValue(lastAttackerType);
 
-            else if (reason.SourcePlayerIndex != -1)
-            {
-                foreach (var p in Main.ActivePlayers)
-                    if (p.whoAmI == reason.SourcePlayerIndex)
-                        return p.name;
+            if (reason.SourcePlayerIndex != -1)
+                foreach (Player player in Main.ActivePlayers)
+                    if (player.whoAmI == reason.SourcePlayerIndex)
+                        return player.name;
 
-                return "Unknown";
-            }
-            else
-                return "Unknown";
+            return "Unknown";
         }
 
-        private static string GetOtherDeathSystemource(PlayerDeathReason reason)
+        private static string GetOtherDeathSource(PlayerDeathReason reason)
         {
             return (OtherDeathCause)reason.SourceOtherIndex switch
             {
@@ -55,7 +51,7 @@ namespace DeathLeaderboard.Common
             };
         }
     }
-    
+
     internal enum OtherDeathCause
     {
         Fell = 0,

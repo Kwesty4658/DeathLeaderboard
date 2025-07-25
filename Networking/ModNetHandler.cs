@@ -6,7 +6,7 @@ namespace DeathLeaderboard.Networking
     {
         internal const int AttackerType = 1;
 
-        private static SyncLastAttackerHandler _lastAttacker = new(AttackerType);
+        private static AttackerHandler _lastAttacker = new(AttackerType);
 
         internal static void HandlePacket(BinaryReader reader, int fromWho)
         {

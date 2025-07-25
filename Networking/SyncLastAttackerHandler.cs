@@ -1,20 +1,17 @@
 using System.IO;
 using DeathLeaderboard.Common.Players;
-using Humanizer;
+using DeathLeaderboard.Common.Systems;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace DeathLeaderboard.Networking
 {
-    internal class SyncLastAttackerHandler : PacketHandler
+    internal class AttackerHandler : PacketHandler
     {
         internal const byte SyncLastAttacker = 1;
 
-        internal SyncLastAttackerHandler(byte handlerType) : base(handlerType)
-        {
-
-        }
+        internal AttackerHandler(byte handlerType) : base(handlerType) { }
 
         public override void HandlePacket(BinaryReader reader, int fromWho)
         {
@@ -26,11 +23,10 @@ namespace DeathLeaderboard.Networking
             }
         }
 
-        internal void SendAttacker(string playerName, string attackerName, int fromWho)
+        internal void SendAttacker(string attackerName, int fromWho)
         {
             ModPacket packet = GetPacket(SyncLastAttacker, fromWho);
 
-            packet.Write(playerName);
             packet.Write(attackerName);
             packet.Send();
         }
@@ -40,9 +36,10 @@ namespace DeathLeaderboard.Networking
             if (Main.netMode != NetmodeID.Server)
                 return;
 
-            string playerName = reader.ReadString();
+            string playerName = Main.player[fromWho].name;
             string attackerName = reader.ReadString();
-            DeathTracker.UpdateServerAttackerInfo(playerName, attackerName);
+
+            DeathsSavingSystem.AddDeath(playerName, attackerName);
             DeathTracker.DisplayLeaderboard();
         }
     }

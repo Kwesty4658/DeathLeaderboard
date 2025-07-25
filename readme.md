@@ -1,2 +1,2 @@
-Death Leaderboard is a very basic mod that displays a leaderboard of player DeathSystem in the chat when a player dies.
+Death Leaderboard is a very basic mod that displays a leaderboard of player DeathsSavingSystem in the chat when a player dies.
 Want to gaslight your friends? Of course you do! Go to C:\Users\user\Documents\My Games\Terraria\tModLoader\DeathLeaderboard\worldname\data.json and change the values!

@@ -9,14 +9,13 @@ using Terraria.Localization;
 using DeathLeaderboard.Common.Systems;
 using System.Linq;
 
-
 namespace DeathLeaderboard.Common.Players
 {
     public class DeathTracker : ModPlayer
     {
-        private static readonly Color DeathChatColour = new(255, 25, 25);
-        private bool _playerHasDied = false;
+        private static readonly Color s_deathMsgColour = new(255, 25, 25);
 
+        private bool _playerHasDied = false;
         private int _lastAttackerType = -1;
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
@@ -27,14 +26,12 @@ namespace DeathLeaderboard.Common.Players
                     return;
 
                 case NetmodeID.MultiplayerClient:
-                    Main.NewText("Multiplayer Client");
-                    DeathLeaderboard.LastAttackerHandler.SendAttacker(Player.name, DeathCauseHelper.GetDeathCause(damageSource, _lastAttackerType), Player.whoAmI);
+                    DeathLeaderboard.AttackerHandler.SendAttacker(DeathCauseHelper.GetDeathCause(damageSource, _lastAttackerType), Player.whoAmI);
                     return;
 
                 case NetmodeID.SinglePlayer:
-                    Main.NewText("Singleplayer");
                     _playerHasDied = true;
-                    DeathSystem.AddDeath(Player.name, DeathCauseHelper.GetDeathCause(damageSource, _lastAttackerType));
+                    DeathsSavingSystem.AddDeath(Player.name, DeathCauseHelper.GetDeathCause(damageSource, _lastAttackerType));
                     return;
             }
         }
@@ -49,34 +46,31 @@ namespace DeathLeaderboard.Common.Players
             _playerHasDied = false;
         }
 
-        internal static void UpdateServerAttackerInfo(string playerName, string attackerName) => DeathSystem.AddDeath(playerName, attackerName);
-
         internal static void DisplayLeaderboard()
         {
             StringBuilder sb = new();
             sb.AppendLine("Leaderboard: ");
 
-            foreach (var player in DeathSystem.Players)
+            foreach (var player in DeathsSavingSystem.Players)
             {
                 var mostCommon = player.Causes
                     .OrderByDescending(c => c.Value)
                     .FirstOrDefault();
 
-                string msg = mostCommon.Key is not null
-                    ? $"    {player.Name}: {player.DeathSystem} | {mostCommon.Value} DeathSystem to {mostCommon.Key}"
-                    : $"    {player.Name}: {player.DeathSystem} | No death causes recorded";
-
-                sb.AppendLine(msg);
+                sb.AppendLine(mostCommon.Key is not null
+                    ? $"    {player.Name}: {player.Deaths} | {mostCommon.Value} deaths to {mostCommon.Key}"
+                    : $"    {player.Name}: {player.Deaths} | No death causes recorded"
+                );
             }
 
             switch (Main.netMode)
             {
                 case NetmodeID.Server:
-                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(sb.ToString()), DeathChatColour);
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(sb.ToString()), s_deathMsgColour);
                     return;
 
                 case NetmodeID.SinglePlayer:
-                    Main.NewText(sb.ToString(), DeathChatColour);
+                    Main.NewText(sb.ToString(), s_deathMsgColour);
                     return;
 
                 case NetmodeID.MultiplayerClient:
