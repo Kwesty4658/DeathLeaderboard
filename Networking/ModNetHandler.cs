@@ -4,17 +4,16 @@ namespace DeathLeaderboard.Networking;
 
 internal class ModNetHandler
 {
-    internal const int AttackerType = 1;
+	internal const int AttackerType = 1;
 
-    private static AttackerHandler _lastAttacker = new(AttackerType);
+	private static AttackerHandler _lastAttacker = new(AttackerType);
 
-    internal static void HandlePacket(BinaryReader reader, int fromWho)
-    {
-        switch (reader.ReadByte())
-        {
-            case AttackerType:
-                _lastAttacker.HandlePacket(reader, fromWho);
-                return;
-        }
-    }
+	internal static void HandlePacket(BinaryReader reader, int fromWho)
+	{
+		switch (reader.ReadByte()) {
+			case AttackerType:
+				_lastAttacker.HandlePacket(reader, fromWho);
+				return;
+		}
+	}
 }
