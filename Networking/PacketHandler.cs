@@ -6,13 +6,11 @@ using Terraria.ModLoader;
 
 namespace DeathLeaderboard.Networking;
 
-internal abstract class PacketHandler
+internal abstract class PacketHandler(byte handlerType)
 {
-	internal byte HandlerType { get; set; }
+	internal byte HandlerType { get; set; } = handlerType;
 
 	public abstract void HandlePacket(BinaryReader reader, int fromWho);
-
-	protected PacketHandler(byte handlerType) => HandlerType = handlerType;
 
 	protected ModPacket GetPacket(byte packetType, int fromWho)
 	{

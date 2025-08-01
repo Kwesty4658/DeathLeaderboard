@@ -18,8 +18,41 @@ Mods: {
 				}
 			}
 
-			DeathLeaderboardConfig.DisplayName: "Leaderboard formatting"
+			DeathLeaderboardConfig.DisplayName: Leaderboard formatting
 			DisplayType.Tooltip: ""
+			LeaderboardFormattingConfig.DisplayName: Leaderboard Formatting Config
+		}
+
+		Leaderboard: {
+			Header: ======LEADERBOARD======
+			PlayerDeaths: "{0}: {1} | {2}"
+			DeathsTo: "{0} deaths to {1}"
+			NoCauses: No causes recorded
+		}
+
+		DeathCauses: {
+			Fell: Falling
+			Drowned: Drowning
+			Lava: Lava
+			Slain: Combat
+			Slain2: Combat
+			Petrified: Petrification
+			Stabbed: Stabbing
+			Suffocated: Suffocation
+			Burned: Burning
+			Poisoned: Poisoning
+			Electrocuted: Electrocution
+			AttemptedEscape: Attempted Escape
+			Licked: Licked
+			Teleport1: Teleportation Mishap
+			Teleport2Male: Teleportation Mishap
+			Teleport2Female: Teleportation Mishap
+			Inferno: Inferno
+			DiedInTheDark: Darkness
+			Starved: Starvation
+			Space: Space
+			Unknown: Unknown
+			Empty: Unknown
 		}
 	}
 }

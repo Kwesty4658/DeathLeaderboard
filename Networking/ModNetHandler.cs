@@ -2,18 +2,18 @@ using System.IO;
 
 namespace DeathLeaderboard.Networking;
 
-internal class ModNetHandler
+internal sealed class ModNetHandler
 {
 	internal const int AttackerType = 1;
 
-	private static AttackerHandler _lastAttacker = new(AttackerType);
+	private static AttackerSyncHandler s_lastAttackerSync = new(AttackerType);
 
 	internal static void HandlePacket(BinaryReader reader, int fromWho)
 	{
 		switch (reader.ReadByte())
 		{
 			case AttackerType:
-				_lastAttacker.HandlePacket(reader, fromWho);
+				s_lastAttackerSync.HandlePacket(reader, fromWho);
 				return;
 		}
 	}
