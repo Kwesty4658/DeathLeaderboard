@@ -2,7 +2,10 @@ using System.IO;
 
 using DeathLeaderboard.Common.Systems;
 
+using Microsoft.Xna.Framework;
+
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -25,9 +28,11 @@ internal class AttackerSyncHandler : PacketHandler
 		}
 	}
 
-	internal void Send(int whoAmI, string key)
+	internal static void Send(int whoAmI, string key)
 	{
-		ModPacket packet = GetPacket(SyncLastAttacker, whoAmI);
+		Main.NewText($"{Main.player[whoAmI].name} sync last attacker: {key}");
+
+		ModPacket packet = DeathLeaderboard.Instance.GetPacket();
 		packet.Write(key);
 		packet.Send();
 	}
@@ -37,6 +42,10 @@ internal class AttackerSyncHandler : PacketHandler
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		LeaderboardSystem.AddDeath(Main.player[fromWho].name, reader.ReadString());
+		string key = reader.ReadString();
+
+		ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"{Main.player[fromWho].name} sync last attacker: {key}"),  Color.Blue);
+
+		LeaderboardSystem.AddDeath(Main.player[fromWho].name, key);
 	}
 }

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
+using DeathLeaderboard.Common.Configs;
 using DeathLeaderboard.Common.GlobalProjectiles;
 using DeathLeaderboard.Networking;
 
@@ -17,14 +18,8 @@ namespace DeathLeaderboard;
 internal sealed class DeathLeaderboard : Mod
 {
 	internal static readonly DeathLeaderboard Instance = ModContent.GetInstance<DeathLeaderboard>();
-	internal static readonly ILog Log = ModContent.GetInstance<DeathLeaderboard>().Logger;
-	internal static AttackerSyncHandler AttackerSyncHandler;
-
-	public override void Load()
-	{
-		AttackerSyncHandler = new(AttackerSyncHandler.SyncLastAttacker);
-	}
+	internal static readonly ILog             Log      = ModContent.GetInstance<DeathLeaderboard>().Logger;
+	internal static readonly RecursionConfig  Config   = ModContent.GetInstance<RecursionConfig>();
 
 	public override void HandlePacket(BinaryReader reader, int whoAmI) => ModNetHandler.HandlePacket(reader, whoAmI);
-
 }

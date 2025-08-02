@@ -16,11 +16,17 @@ Mods: {
 						Tooltip: Show both the total deaths, and the most common cause per player
 					}
 				}
+
+				RecursionDepth: {
+					Tooltip: ""
+					Label: Recursion Depth
+				}
 			}
 
 			DeathLeaderboardConfig.DisplayName: Leaderboard formatting
 			DisplayType.Tooltip: ""
 			LeaderboardFormattingConfig.DisplayName: Leaderboard Formatting Config
+			RecursionConfig.DisplayName: Recursion Config
 		}
 
 		Leaderboard: {

@@ -7,6 +7,7 @@ using log4net;
 using Newtonsoft.Json;
 
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace DeathLeaderboard.Common.Systems;
@@ -38,21 +39,21 @@ internal sealed partial class LeaderboardSystem : ModSystem
 	{
 		File.WriteAllText(s_jsonPath, JsonConvert.SerializeObject(Players, Formatting.Indented));
 
-		Players = null;
+		Players    = null;
 		s_jsonPath = null;
 	}
 
-	internal static void AddDeath(string playerName, string npcInternalName)
+	internal static void AddDeath(string playerName, PlayerDeathReason damageSource)
 	{
+		string npcInternalName = LeaderboardLocalisation.GetLocalisationKey(playerName, damageSource);
+
 		Player player = Players.FirstOrDefault(p => p.Name == playerName);
 
 		if (player == null)
 		{
 			Players.Add(new Player
 			{
-				Name = playerName,
-				Deaths = 1,
-				Causes = new Dictionary<string, int> { [npcInternalName] = 1 }
+				Name = playerName, Deaths = 1, Causes = new Dictionary<string, int> { [npcInternalName] = 1 }
 			});
 			return;
 		}
@@ -73,15 +74,11 @@ internal sealed partial class LeaderboardSystem : ModSystem
 			s_log.Info("Old data exists! Migrating now.");
 
 			var oldData = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(oldJsonPath));
-			foreach (var kvp in oldData)
+			foreach (KeyValuePair<string, int> kvp in oldData)
 			{
-				Players.Add(new Player
-				{
-					Name = kvp.Key,
-					Deaths = kvp.Value,
-					Causes = []
-				});
+				Players.Add(new Player { Name = kvp.Key, Deaths = kvp.Value, Causes = [] });
 			}
+
 			s_log.Info("Migration complete. Deleting old data.");
 
 			File.Delete(oldJsonPath);
