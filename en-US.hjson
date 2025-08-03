@@ -33,10 +33,6 @@ Mods: {
 			Header: ======LEADERBOARD======
 			PlayerDeaths: "{0}: {1} | {2}"
 			DeathsTo: "{0} deaths to {1}"
-			NoCauses: No causes recorded
-		}
-
-		DeathCauses: {
 			Fell: Falling
 			Drowned: Drowning
 			Lava: Lava
@@ -59,6 +55,7 @@ Mods: {
 			Space: Space
 			Unknown: Unknown
 			Empty: Unknown
+			NoCauses: No Causes
 		}
 	}
 }

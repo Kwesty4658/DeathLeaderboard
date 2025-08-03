@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DeathLeaderboard.Common.Systems;
 
-internal class Player
+internal class LeaderboardPlayer
 {
 	public string                  Name   { get; set; }
 	public int                     Deaths { get; set; }

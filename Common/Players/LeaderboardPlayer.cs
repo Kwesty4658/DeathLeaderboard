@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+
+using DeathLeaderboard.Common.GlobalProjectiles;
+using DeathLeaderboard.Common.Systems;
+
 using Microsoft.Xna.Framework;
 
 using Terraria;
@@ -6,9 +11,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-
-using DeathLeaderboard.Common.Systems;
-using DeathLeaderboard.Networking;
 
 namespace DeathLeaderboard.Common.Players;
 
@@ -19,25 +21,12 @@ internal sealed class LeaderboardPlayer : ModPlayer
 		switch (Main.netMode)
 		{
 			case NetmodeID.Server:
-			{
-				LeaderboardSystem.AddDeath(
-					Player.name,
-					damageSource);
-
+			case NetmodeID.SinglePlayer:
+				LeaderboardSystem.AddDeath(Player.name, damageSource);
 				return;
-			}
 
 			case NetmodeID.MultiplayerClient:
 				return;
-
-			case NetmodeID.SinglePlayer:
-			{
-				LeaderboardSystem.AddDeath(
-					Player.name,
-					damageSource);
-
-				return;
-			}
 		}
 	}
 
@@ -46,23 +35,25 @@ internal sealed class LeaderboardPlayer : ModPlayer
 		switch (Main.netMode)
 		{
 			case NetmodeID.Server:
-			{
-				foreach (NetworkText line in Leaderboard.Get())
+				foreach (NetworkText line in LeaderboardSystem.GetFormattedLeaderboard())
+				{
 					ChatHelper.BroadcastChatMessage(line, Color.Red);
+				}
 
-				return;
-			}
+			break;
+
+			case NetmodeID.SinglePlayer:
+				foreach (NetworkText line in LeaderboardSystem.GetFormattedLeaderboard())
+				{
+					Main.NewText(line, Color.Red);
+				}
+
+			break;
 
 			case NetmodeID.MultiplayerClient:
 				return;
-
-			case NetmodeID.SinglePlayer:
-			{
-				foreach (NetworkText line in Leaderboard.Get())
-					Main.NewText(line, Color.Red);
-
-				return;
-			}
 		}
+
+		ProjectileOwner.ProjectileOwners.Clear();
 	}
 }
