@@ -4,7 +4,7 @@ namespace DeathLeaderboard.Common.Systems;
 
 internal class LeaderboardPlayer
 {
-	public string                  Name   { get; set; }
-	public int                     Deaths { get; set; }
-	public Dictionary<string, int> Causes { get; set; } = [];
+    public string                  Name   { get; set; }
+    public int                     Deaths { get; set; }
+    public Dictionary<string, int> Causes { get; set; } = [];
 }

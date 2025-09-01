@@ -1,10 +1,7 @@
 using System.Collections.Generic;
-
 using DeathLeaderboard.Common.GlobalProjectiles;
 using DeathLeaderboard.Common.Systems;
-
 using Microsoft.Xna.Framework;
-
 using Terraria;
 using Terraria.Chat;
 using Terraria.DataStructures;
@@ -16,44 +13,37 @@ namespace DeathLeaderboard.Common.Players;
 
 internal sealed class LeaderboardPlayer : ModPlayer
 {
-	public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-	{
-		switch (Main.netMode)
-		{
-			case NetmodeID.Server:
-			case NetmodeID.SinglePlayer:
-				LeaderboardSystem.AddDeath(Player.name, damageSource);
-				return;
+    public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+    {
+        switch (Main.netMode)
+        {
+            case NetmodeID.Server:
+            case NetmodeID.SinglePlayer:
+                LeaderboardSystem.AddDeath(Player.name, damageSource);
+                return;
 
-			case NetmodeID.MultiplayerClient:
-				return;
-		}
-	}
+            case NetmodeID.MultiplayerClient:
+                return;
+        }
+    }
 
-	public override void OnRespawn()
-	{
-		switch (Main.netMode)
-		{
-			case NetmodeID.Server:
-				foreach (NetworkText line in LeaderboardSystem.GetFormattedLeaderboard())
-				{
-					ChatHelper.BroadcastChatMessage(line, Color.Red);
-				}
+    public override void OnRespawn()
+    {
+        switch (Main.netMode)
+        {
+            case NetmodeID.Server:
+                foreach (var line in LeaderboardSystem.LeaderboardWithCauses())
+                    ChatHelper.BroadcastChatMessage(line, Color.Red);
+                break;
 
-			break;
+            case NetmodeID.SinglePlayer:
+                foreach (var line in LeaderboardSystem.LeaderboardWithCauses()) Main.NewText(line, Color.Red);
+                break;
 
-			case NetmodeID.SinglePlayer:
-				foreach (NetworkText line in LeaderboardSystem.GetFormattedLeaderboard())
-				{
-					Main.NewText(line, Color.Red);
-				}
+            case NetmodeID.MultiplayerClient:
+                return;
+        }
 
-			break;
-
-			case NetmodeID.MultiplayerClient:
-				return;
-		}
-
-		ProjectileOwner.ProjectileOwners.Clear();
-	}
+        ProjectileOwner.ProjectileOwners.Clear();
+    }
 }
