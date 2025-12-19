@@ -20,24 +20,29 @@ namespace DeathLeaderboard.Common
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) => _died = true;
 
-        public override void PostUpdate() {
-            if (_died) {
+        public override void PostUpdate()
+        {
+            if (_died)
+            {
                 _died = false;
                 Data.Write(Player.name);
                 SendMessage();
             }
         }
 
-        private void SendMessage() {
+        private void SendMessage()
+        {
             var sortedData = from entry in Data.GetData() orderby entry.Value descending select entry;
 
             var sb = new StringBuilder();
             sb.AppendLine("Death Leaderboard:");
-            foreach (var kvp in sortedData) {
+            foreach (var kvp in sortedData)
+            {
                 sb.AppendLine($"  {kvp.Key}: {kvp.Value}");
             }
 
-            switch (Main.netMode) {
+            switch (Main.netMode)
+            {
                 case NetmodeID.SinglePlayer:
                     Main.NewText(sb.ToString(), Color.Red);
                     return;
