@@ -2,11 +2,14 @@
     <Import Project="..\tModLoader.targets"/>
     <PropertyGroup>
         <AssemblyName>DeathLeaderboard</AssemblyName>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>default</LangVersion>
+
         <DotNetPath Condition=" '$(OS)' == 'Windows_NT' ">dotnet.exe</DotNetPath>
-        <DotNetPath Condition=" '$(OS)' == 'Unix' ">dotnet</DotNetPath>
+        <DotNetPath Condition=" '$(OS)' == 'Unix' ">/usr/bin/dotnet</DotNetPath>
+
         <DotNetPath Condition=" '$(DotNetPath)' == '' ">dotnet</DotNetPath>
     </PropertyGroup>
+
     <ItemGroup>
         <EditorConfigFiles Remove=".editorconfig"/>
     </ItemGroup>

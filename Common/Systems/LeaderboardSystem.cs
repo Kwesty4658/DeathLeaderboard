@@ -1,12 +1,12 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
+using Terraria.Localization;
 
 namespace DeathLeaderboard.Common.Systems;
 
@@ -17,7 +17,7 @@ internal sealed partial class LeaderboardSystem : ModSystem
 
     public override void OnWorldLoad()
     {
-        if (Main.netMode == NetmodeID.MultiplayerClient)
+        if (Main.netMode == NetmodeID.MultiplayerClient) 
             return;
         
         s_jsonPath           = Path.Combine(Main.WorldPath, $"{Main.worldName}.deaths.json");
@@ -34,7 +34,7 @@ internal sealed partial class LeaderboardSystem : ModSystem
 
     public override void OnWorldUnload()
     {
-        if (Main.netMode == NetmodeID.MultiplayerClient)
+        if (!Main.dedServ || s_jsonPath == null || s_leaderboardPlayers == null)
             return;
         
         File.WriteAllText(s_jsonPath, JsonConvert.SerializeObject(s_leaderboardPlayers, Formatting.Indented));
@@ -44,14 +44,16 @@ internal sealed partial class LeaderboardSystem : ModSystem
 
     internal static void AddDeath(string playerName, PlayerDeathReason damageSource)
     {
-        var npcInternalName   = GetLocalisationKey(playerName, damageSource);
+        var npcInternalName   = GetLocalisationKey(damageSource);
         var leaderboardPlayer = s_leaderboardPlayers.FirstOrDefault(p => p.Name == playerName);
 
         if (leaderboardPlayer == null)
         {
             s_leaderboardPlayers.Add(new()
             {
-                Name = playerName, Deaths = 1, Causes = new() { [npcInternalName] = 1 }
+                Name = playerName, 
+                Deaths = 1, 
+                Causes = new() { [npcInternalName] = 1 }
             });
             return;
         }
@@ -60,6 +62,8 @@ internal sealed partial class LeaderboardSystem : ModSystem
         leaderboardPlayer.Causes[npcInternalName] = leaderboardPlayer.Causes.TryGetValue(npcInternalName, out var count)
             ? count + 1
             : 1;
+
+        DeathLeaderboard.Instance.Logger.Debug($"Death credited to {Language.GetText(npcInternalName)}");
     }
 
 
@@ -69,9 +73,8 @@ internal sealed partial class LeaderboardSystem : ModSystem
         if (!File.Exists(oldJsonPath)) 
             return false;
 
-        var oldData = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(oldJsonPath));
-        foreach (var kvp in oldData)
-            s_leaderboardPlayers.Add(new() { Name = kvp.Key, Deaths = kvp.Value, Causes = [] });
+        foreach (var kvp in JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(oldJsonPath)))
+            s_leaderboardPlayers.Add(new LeaderboardPlayer { Name = kvp.Key, Deaths = kvp.Value, Causes = [] });
 
         File.Delete(oldJsonPath);
         return true;

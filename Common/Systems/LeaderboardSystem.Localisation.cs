@@ -1,3 +1,4 @@
+using DeathLeaderboard.Common.GlobalNPCs;
 using DeathLeaderboard.Common.GlobalProjectiles;
 using Terraria;
 using Terraria.DataStructures;
@@ -9,12 +10,11 @@ namespace DeathLeaderboard.Common.Systems;
 internal sealed partial class LeaderboardSystem : ModSystem
 {
     #region LocalisedText
-
     private static LocalizedText
-        s_header,
-        s_playerDeaths,
-        s_deathsTo,
-        s_noCauses,
+        Header,
+        PlayerDeaths,
+        DeathsTo,
+        NoCauses,
         Fell,
         Drowned,
         Lava,
@@ -37,15 +37,14 @@ internal sealed partial class LeaderboardSystem : ModSystem
         Space,
         Unknown,
         Empty;
-
     #endregion LocalisedText
 
     public override void OnLocalizationsLoaded()
     {
-        s_header        = Mod.GetLocalization("Leaderboard.Header");
-        s_playerDeaths  = Mod.GetLocalization("Leaderboard.PlayerDeaths");
-        s_deathsTo      = Mod.GetLocalization("Leaderboard.DeathsTo");
-        s_noCauses      = Mod.GetLocalization("Leaderboard.NoCauses");
+        Header          = Mod.GetLocalization("Leaderboard." + nameof(Header));
+        PlayerDeaths    = Mod.GetLocalization("Leaderboard." + nameof(PlayerDeaths));
+        DeathsTo        = Mod.GetLocalization("Leaderboard." + nameof(DeathsTo));
+        NoCauses        = Mod.GetLocalization("Leaderboard." + nameof(NoCauses));
         Fell            = Mod.GetLocalization("Leaderboard." + nameof(Fell));
         Drowned         = Mod.GetLocalization("Leaderboard." + nameof(Drowned));
         Lava            = Mod.GetLocalization("Leaderboard." + nameof(Lava));
@@ -70,60 +69,69 @@ internal sealed partial class LeaderboardSystem : ModSystem
         Unknown         = Mod.GetLocalization("Leaderboard." + nameof(Unknown));
     }
 
-    private static string GetLocalisationKey(string playerName, PlayerDeathReason damageSource)
+    private static string GetLocalisationKey(PlayerDeathReason damageSource)
     {
-        if (damageSource.SourceOtherIndex != -1) 
-            return GetOtherCause(damageSource).Key;
-
+        if (damageSource.SourceOtherIndex != -1)
+        {
+            return GetEnvironmentalCause(damageSource).Key;
+        }
+            
         if (damageSource.SourcePlayerIndex != -1)
         {
-            var player = Main.player[damageSource.SourcePlayerIndex];
-            if (player?.active == true) 
-                return player.name;
+            if (Main.player[damageSource.SourcePlayerIndex]?.active == true) 
+                return Main.player[damageSource.SourcePlayerIndex].name;
+        }
+        
+        if (damageSource.SourceNPCIndex != -1)
+        {
+            if (NPCOwner.Owners.TryGetValue(Main.npc[damageSource.SourceNPCIndex].netID, out int netID))
+                return Lang.GetNPCName(netID).Key;
+
+            return Lang.GetNPCName(Main.npc[damageSource.SourceNPCIndex].netID).Key;
         }
 
         if (damageSource.SourceProjectileType != -1)
-            return Lang.GetNPCName(ProjectileOwner.ProjectileOwners[damageSource.SourceProjectileType]).Key;
+        {
+            if (ProjectileOwner.Owners.TryGetValue(damageSource.SourceProjectileType, out int netID))
+                return Lang.GetNPCName(netID).Key;
 
-        if (damageSource.SourceNPCIndex != -1)
-            return damageSource.TryGetCausingEntity(out var entity) 
-                ? Lang.GetNPCName(Main.npc[entity.whoAmI].netID).Key
-                : Unknown.Key;
+            return Lang.GetNPCName(damageSource.SourceProjectileType).Key;
+        }
 
         return Unknown.Key;
     }
 
-    private static LocalizedText GetOtherCause(PlayerDeathReason damageSource)
+    private static LocalizedText GetEnvironmentalCause(PlayerDeathReason damageSource)
     {
-        return (OtherDeathCause)damageSource.SourceOtherIndex switch
+        return (EnvironmentalCause)damageSource.SourceOtherIndex switch
         {
-            OtherDeathCause.Fell            => Fell,
-            OtherDeathCause.Drowned         => Drowned,
-            OtherDeathCause.Lava            => Lava,
-            OtherDeathCause.Unknown         => Unknown,
-            OtherDeathCause.Slain           => Slain,
-            OtherDeathCause.Slain2          => Slain2,
-            OtherDeathCause.Petrified       => Petrified,
-            OtherDeathCause.Stabbed         => Stabbed,
-            OtherDeathCause.Suffocated      => Suffocated,
-            OtherDeathCause.Burned          => Burned,
-            OtherDeathCause.Poisoned        => Poisoned,
-            OtherDeathCause.Electrocuted    => Electrocuted,
-            OtherDeathCause.AttemptedEscape => AttemptedEscape,
-            OtherDeathCause.Licked          => Licked,
-            OtherDeathCause.Teleport1       => Teleport1,
-            OtherDeathCause.Teleport2Male   => Teleport2Male,
-            OtherDeathCause.Teleport2Female => Teleport2Female,
-            OtherDeathCause.Inferno         => Inferno,
-            OtherDeathCause.DiedInTheDark   => DiedInTheDark,
-            OtherDeathCause.Starved         => Starved,
-            OtherDeathCause.Space           => Space,
-            OtherDeathCause.Empty           => Empty,
-            _                               => Unknown
+            EnvironmentalCause.Fell            => Fell,
+            EnvironmentalCause.Drowned         => Drowned,
+            EnvironmentalCause.Lava            => Lava,
+            EnvironmentalCause.Unknown         => Unknown,
+            EnvironmentalCause.Slain           => Slain,
+            EnvironmentalCause.Slain2          => Slain2,
+            EnvironmentalCause.Petrified       => Petrified,
+            EnvironmentalCause.Stabbed         => Stabbed,
+            EnvironmentalCause.Suffocated      => Suffocated,
+            EnvironmentalCause.Burned          => Burned,
+            EnvironmentalCause.Poisoned        => Poisoned,
+            EnvironmentalCause.Electrocuted    => Electrocuted,
+            EnvironmentalCause.AttemptedEscape => AttemptedEscape,
+            EnvironmentalCause.Licked          => Licked,
+            EnvironmentalCause.Teleport1       => Teleport1,
+            EnvironmentalCause.Teleport2Male   => Teleport2Male,
+            EnvironmentalCause.Teleport2Female => Teleport2Female,
+            EnvironmentalCause.Inferno         => Inferno,
+            EnvironmentalCause.DiedInTheDark   => DiedInTheDark,
+            EnvironmentalCause.Starved         => Starved,
+            EnvironmentalCause.Space           => Space,
+            EnvironmentalCause.Empty           => Empty,
+            _                                  => Unknown
         };
     }
 
-    private enum OtherDeathCause
+    private enum EnvironmentalCause
     {
         Fell            = 0,
         Drowned         = 1,
