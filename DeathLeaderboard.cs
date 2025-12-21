@@ -1,6 +1,10 @@
+using log4net;
 using Terraria.ModLoader;
 
-namespace DeathLeaderboard
+namespace DeathLeaderboard;
+
+internal sealed class DeathLeaderboard : Mod
 {
-    public class DeathLeaderboard : Mod {}
-} 
+    internal static readonly DeathLeaderboard Instance = ModContent.GetInstance<DeathLeaderboard>();
+    internal static readonly ILog Log = Instance.Logger;
+}

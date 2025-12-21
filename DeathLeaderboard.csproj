@@ -1,10 +1,16 @@
-
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\tModLoader.targets" />
-  <PropertyGroup>
-    <AssemblyName>DeathLeaderboard</AssemblyName>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-  </ItemGroup>
+    <Import Project="..\tModLoader.targets"/>
+    <PropertyGroup>
+        <AssemblyName>DeathLeaderboard</AssemblyName>
+        <LangVersion>default</LangVersion>
+
+        <DotNetPath Condition=" '$(OS)' == 'Windows_NT' ">dotnet.exe</DotNetPath>
+        <DotNetPath Condition=" '$(OS)' == 'Unix' ">/usr/bin/dotnet</DotNetPath>
+
+        <DotNetPath Condition=" '$(DotNetPath)' == '' ">dotnet</DotNetPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EditorConfigFiles Remove=".editorconfig"/>
+    </ItemGroup>
 </Project>

@@ -1,0 +1,61 @@
+Mods: {
+	DeathLeaderboard: {
+		Configs: {
+			Common: {
+				DisplayTypes: {
+					Label: Display Types
+					Tooltip: How the leaderboard is formatted in chat.
+
+					Deaths: {
+						Label: Deaths
+						Tooltip: Show only the total deaths per player.
+					}
+
+					DeathsCauses: {
+						Label: Deaths + Causes
+						Tooltip: Show both the total deaths, and the most common cause per player
+					}
+				}
+
+				RecursionDepth: {
+					Tooltip: ""
+					Label: Recursion Depth
+				}
+			}
+
+			DeathLeaderboardConfig.DisplayName: Leaderboard formatting
+			DisplayType.Tooltip: ""
+			LeaderboardFormattingConfig.DisplayName: Leaderboard Formatting Config
+			RecursionConfig.DisplayName: Recursion Config
+		}
+
+		Leaderboard: {
+			Header: ======LEADERBOARD======
+			PlayerDeaths: "{0}: {1} | {2}"
+			DeathsTo: "{0} deaths to {1}"
+			Fell: Falling
+			Drowned: Drowning
+			Lava: Lava
+			Slain: Combat
+			Slain2: Combat
+			Petrified: Petrification
+			Stabbed: Stabbing
+			Suffocated: Suffocation
+			Burned: Burning
+			Poisoned: Poisoning
+			Electrocuted: Electrocution
+			AttemptedEscape: Attempted Escape
+			Licked: Licked
+			Teleport1: Teleportation Mishap
+			Teleport2Male: Teleportation Mishap
+			Teleport2Female: Teleportation Mishap
+			Inferno: Inferno
+			DiedInTheDark: Darkness
+			Starved: Starvation
+			Space: Space
+			Unknown: Unknown
+			Empty: Unknown
+			NoCauses: No Causes
+		}
+	}
+}
