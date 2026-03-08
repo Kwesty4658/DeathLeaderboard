@@ -1,13 +1,13 @@
 using DeathLeaderboard.Common.GlobalNPCs;
 using DeathLeaderboard.Common.GlobalProjectiles;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.Localization;
+using Terraria.DataStructures;
 
 namespace DeathLeaderboard.Common.Systems;
 
-internal sealed partial class LeaderboardSystem : ModSystem
+internal partial class LeaderboardSystem : ModSystem
 {
     #region LocalisedText
     private static LocalizedText
@@ -69,91 +69,78 @@ internal sealed partial class LeaderboardSystem : ModSystem
         Unknown         = Mod.GetLocalization("Leaderboard." + nameof(Unknown));
     }
 
-    private static string GetLocalisationKey(PlayerDeathReason damageSource)
+    // Adapted from Lang.CreateDeathMessage()
+    private static NetworkText GetLocalisationKey(PlayerDeathReason damageSource)
     {
-        if (damageSource.SourceOtherIndex != -1)
+        var text = NetworkText.Empty;
+        
+        // Death cause is projectile
+        if (damageSource.SourceProjectileLocalIndex >= 0)
         {
-            return GetEnvironmentalCause(damageSource).Key;
+            /*
+             * This is confusing, if you aren't me. Possibly if you are me.
+             * Get npc localisation key by:
+             * indexing into Main.projectile with damageSource.SourceProjectileLocalIndex
+             * using GetGlobalProjectile to get the ProjectileOwner instance attached to this projectile
+             * taking ProjectileOwner.Owner to get the netID of the npc that spawned this projectile
+             * then finally passing that netID to Lang.GetNPCName
+             */
+            text = NetworkText.FromKey(
+                Lang.GetNPCName(
+                    Main.projectile[damageSource.SourceProjectileLocalIndex]
+                        .GetGlobalProjectile<ProjectileOwner>()
+                            .Owner
+                    ).Key
+                );
         }
-            
-        if (damageSource.SourcePlayerIndex != -1)
+
+        // Death cause is npc
+        if (damageSource.SourceNPCIndex >= 0)
         {
-            if (Main.player[damageSource.SourcePlayerIndex]?.active == true) 
-                return Main.player[damageSource.SourcePlayerIndex].name;
+            text = Main.npc[damageSource.SourceNPCIndex].GetGivenOrTypeNetName();
         }
         
-        if (damageSource.SourceNPCIndex != -1)
+        // Death cause is player (and not server???)
+        if (damageSource.SourcePlayerIndex is >= 0 and < 255)
         {
-            if (NPCOwner.Owners.TryGetValue(Main.npc[damageSource.SourceNPCIndex].netID, out int netID))
-                return Lang.GetNPCName(netID).Key;
-
-            return Lang.GetNPCName(Main.npc[damageSource.SourceNPCIndex].netID).Key;
+            text = NetworkText.FromLiteral(Main.player[damageSource.SourcePlayerIndex].name);
         }
-
-        if (damageSource.SourceProjectileType != -1)
+        
+        // if killed by a player's item (unsure if this is what the vanilla code means)
+        if (damageSource.SourceItem is not null)
         {
-            if (ProjectileOwner.Owners.TryGetValue(damageSource.SourceProjectileType, out int netID))
-                return Lang.GetNPCName(netID).Key;
-
-            return Lang.GetNPCName(damageSource.SourceProjectileType).Key;
+            text = NetworkText.FromKey(Lang.GetItemName(damageSource.SourceItem.netID).Key);
         }
-
-        return Unknown.Key;
-    }
-
-    private static LocalizedText GetEnvironmentalCause(PlayerDeathReason damageSource)
-    {
-        return (EnvironmentalCause)damageSource.SourceOtherIndex switch
+        
+        // if killed by anything else (environmental)
+        if (damageSource.SourceOtherIndex >= 0)
         {
-            EnvironmentalCause.Fell            => Fell,
-            EnvironmentalCause.Drowned         => Drowned,
-            EnvironmentalCause.Lava            => Lava,
-            EnvironmentalCause.Unknown         => Unknown,
-            EnvironmentalCause.Slain           => Slain,
-            EnvironmentalCause.Slain2          => Slain2,
-            EnvironmentalCause.Petrified       => Petrified,
-            EnvironmentalCause.Stabbed         => Stabbed,
-            EnvironmentalCause.Suffocated      => Suffocated,
-            EnvironmentalCause.Burned          => Burned,
-            EnvironmentalCause.Poisoned        => Poisoned,
-            EnvironmentalCause.Electrocuted    => Electrocuted,
-            EnvironmentalCause.AttemptedEscape => AttemptedEscape,
-            EnvironmentalCause.Licked          => Licked,
-            EnvironmentalCause.Teleport1       => Teleport1,
-            EnvironmentalCause.Teleport2Male   => Teleport2Male,
-            EnvironmentalCause.Teleport2Female => Teleport2Female,
-            EnvironmentalCause.Inferno         => Inferno,
-            EnvironmentalCause.DiedInTheDark   => DiedInTheDark,
-            EnvironmentalCause.Starved         => Starved,
-            EnvironmentalCause.Space           => Space,
-            EnvironmentalCause.Empty           => Empty,
-            _                                  => Unknown
-        };
-    }
-
-    private enum EnvironmentalCause
-    {
-        Fell            = 0,
-        Drowned         = 1,
-        Lava            = 2,
-        Unknown         = 3,
-        Slain           = 4,
-        Petrified       = 5,
-        Stabbed         = 6,
-        Suffocated      = 7,
-        Burned          = 8,
-        Poisoned        = 9,
-        Electrocuted    = 10,
-        AttemptedEscape = 11,
-        Licked          = 12,
-        Teleport1       = 13,
-        Teleport2Male   = 14,
-        Teleport2Female = 15,
-        Inferno         = 16,
-        DiedInTheDark   = 17,
-        Starved         = 18,
-        Space           = 19,
-        Empty           = 254,
-        Slain2          = 255
+            return damageSource.SourceOtherIndex switch
+            {
+                0 => NetworkText.FromKey(Fell.Key),
+                1 => NetworkText.FromKey(Drowned.Key),
+                2 => NetworkText.FromKey(Lava.Key),
+                3 => NetworkText.FromKey(Slain.Key),
+                4 => NetworkText.FromKey(Slain.Key),
+                5 => NetworkText.FromKey(Petrified.Key),
+                6 => NetworkText.FromKey(Stabbed.Key),
+                7 => NetworkText.FromKey(Suffocated.Key),
+                8 => NetworkText.FromKey(Burned.Key),
+                9 => NetworkText.FromKey(Poisoned.Key),
+                10 => NetworkText.FromKey(Electrocuted.Key),
+                11 => NetworkText.FromKey(AttemptedEscape.Key),
+                12 => NetworkText.FromKey(Licked.Key),
+                13 => NetworkText.FromKey(Teleport1.Key),
+                14 => NetworkText.FromKey(Teleport2Male.Key),
+                15 => NetworkText.FromKey(Teleport2Female.Key),
+                16 => NetworkText.FromKey(Inferno.Key),
+                17 => NetworkText.FromKey(DiedInTheDark.Key),
+                18 => NetworkText.FromKey(Starved.Key),
+                19 => NetworkText.FromKey(Space.Key),
+                254 => NetworkText.Empty,
+                _ => NetworkText.FromKey(Slain.Key)
+            };
+        }
+        return text;
     }
 }

@@ -10,26 +10,22 @@ namespace DeathLeaderboard.Common.GlobalProjectiles;
 public class ProjectileOwner : GlobalProjectile
 {
     /// <summary>
-    /// Maps projectile types to the entity that spawned them in.
-    /// Dictionary<projectile.type, parent.netID>
+    /// netID of the owning entity
     /// </summary>
-    public static Dictionary<int, int> Owners { get; } = [];
+    public int Owner { get; private set; }
 
     public override bool InstancePerEntity => true;
 
     public override void OnSpawn(Projectile projectile, IEntitySource source)
     {
-        if (source is EntitySource_Parent { Entity: NPC { } parent })
+        if (source is not EntitySource_Parent { Entity: NPC parent }) return;
+        
+        if (parent.netID == -1)
         {
-            DeathLeaderboard.Log.Debug($"{Lang.GetNPCName(parent.netID)} spawned projectile: {Lang.GetProjectileName(projectile.type)}");
-
-            if (parent.realLife < -1)
-            {
-                Owners[projectile.type] = parent.realLife;
-                return;
-            }
-            
-            Owners[projectile.type] = parent.netID;
+            Owner = parent.netID;
+            return;
         }
+            
+        if (parent.netID != -1) Owner = Main.npc[parent.netID].netID;
     }
 }
